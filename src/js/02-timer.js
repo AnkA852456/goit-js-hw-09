@@ -25,29 +25,30 @@ flatpickr('#datetime-picker', {
 
 const timer = {
   start() {
-    let currentTime = Date.now();
+    // let currentTime = Date.now();
     let intervalId = null;
 
-    if (chosenDate < currentTime) {
+    if (chosenDate < Date.now()) {
       refs.startBtn.removeAttribute('disabled', 'disabled');
       clearInterval(intervalId);
       Notiflix.Notify.failure('Please choose a date in the future');
       let time = convertMs(0);
       updateClockFace(time);
-
       return;
     }
 
     intervalId = setInterval(() => {
-      let deltaTime = chosenDate - currentTime;
-      console.log(deltaTime);
-      let time = convertMs(deltaTime);
-      console.log(convertMs(deltaTime));
-
-      updateClockFace(time);
-      //   console.log(time);
-      currentTime += 1;
-      //   console.log(`${days}:${hours}:${minutes}:${seconds}`);
+      let deltaTime = chosenDate - Date.now();
+      if (deltaTime < 0) {
+        refs.days.textContent = `00`;
+        refs.hours.textContent = `00`;
+        refs.mins.textContent = `00`;
+        refs.secs.textContent = `00`;
+      } else {
+        let time = convertMs(deltaTime);
+        updateClockFace(time);
+        // currentTime += 1000;
+      }
     }, 1000);
   },
 };
