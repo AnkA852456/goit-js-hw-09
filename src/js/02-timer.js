@@ -12,7 +12,6 @@ const refs = {
 };
 
 let chosenDate = null;
-let intervalId = null;
 
 flatpickr('#datetime-picker', {
   enableTime: true,
@@ -27,12 +26,15 @@ flatpickr('#datetime-picker', {
 const timer = {
   start() {
     let currentTime = Date.now();
+    let intervalId = null;
 
     if (chosenDate < currentTime) {
+      refs.startBtn.removeAttribute('disabled', 'disabled');
       clearInterval(intervalId);
       Notiflix.Notify.failure('Please choose a date in the future');
       let time = convertMs(0);
       updateClockFace(time);
+
       return;
     }
 
@@ -51,8 +53,10 @@ const timer = {
 };
 
 refs.startBtn.addEventListener('click', () => {
-  timer.start();
-  refs.startBtn.disabled = true;
+  if (!refs.startBtn.hasAttribute('disable')) {
+    refs.startBtn.setAttribute('disabled', 'disabled');
+    timer.start();
+  }
 });
 
 function updateClockFace({ days, hours, minutes, seconds }) {
